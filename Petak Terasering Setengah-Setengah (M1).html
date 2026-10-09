@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Petak Terasering Setengah-Setengah</title>
+<style>
+:root{--bg:#f6f3ea;--fg:#1f2a1f;--muted:#5d6a5d;--card:#ffffff;--line:#d9d4c2;--accent:#2f7d32;--accent2:#1d5a21;--soil:#b98b5a;--soil2:#a27647;--gold:#c98a00;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141a14;--fg:#eaf1e6;--muted:#a3b2a0;--card:#1e271e;--line:#34402f;--accent:#7bc47f;--accent2:#a6dfa9;--soil:#7a5a3a;--soil2:#684b30;--gold:#f0b84a}}
+:root[data-theme="dark"]{--bg:#141a14;--fg:#eaf1e6;--muted:#a3b2a0;--card:#1e271e;--line:#34402f;--accent:#7bc47f;--accent2:#a6dfa9;--soil:#7a5a3a;--soil2:#684b30;--gold:#f0b84a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.45}
+main{max-width:980px;margin:0 auto;padding:16px}
+h1{font-size:clamp(1.4rem,3.5vw,2rem);margin:4px 0 4px}
+.sub{color:var(--muted);margin:0 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
+.q{font-size:clamp(1.05rem,2.6vw,1.3rem);font-weight:650;margin:0 0 10px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+button{font:inherit;cursor:pointer;border-radius:14px;border:2px solid var(--accent);background:transparent;color:var(--fg);padding:14px 16px;min-height:56px;text-align:left}
+button:hover{background:color-mix(in srgb,var(--accent) 12%,transparent)}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+button.primary{background:var(--accent);color:#fff;text-align:center;font-weight:700;border-color:var(--accent)}
+:root[data-theme="dark"] button.primary{color:#0b140b}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) button.primary{color:#0b140b}}
+button.primary:hover{background:var(--accent2)}
+button.ghost{text-align:center;border-color:var(--line);color:var(--muted)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.opt b{display:inline-block;width:1.7em;height:1.7em;line-height:1.7em;text-align:center;border-radius:50%;background:var(--accent);color:#fff;margin-right:8px}
+:root[data-theme="dark"] .opt b{color:#0b140b}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .opt b{color:#0b140b}}
+.bars{margin-top:12px;display:grid;gap:8px}
+.bar{display:grid;grid-template-columns:2.2em 1fr 3.4em;gap:8px;align-items:center}
+.track{height:26px;background:color-mix(in srgb,var(--line) 60%,transparent);border-radius:8px;overflow:hidden}
+.fill{height:100%;background:var(--accent);width:0;transition:width .5s ease}
+.bar span:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.meta{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:var(--muted);margin-top:8px;font-size:.95rem}
+.stage{width:100%;overflow:hidden;border-radius:12px;border:2px solid var(--line)}
+svg{display:block;width:100%;height:auto}
+.rect-p{transition:width .7s ease,x .7s ease}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.ctrl button{flex:1 1 150px;text-align:center}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.stat{border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.stat small{display:block;color:var(--muted)}
+.stat strong{font-size:1.35rem;font-variant-numeric:tabular-nums}
+.sum{font-size:clamp(1rem,2.4vw,1.25rem);margin:12px 0 0;word-break:break-word}
+.sum em{font-style:normal;color:var(--accent2);font-weight:700}
+.note{border-left:5px solid var(--gold);background:color-mix(in srgb,var(--gold) 12%,transparent);padding:12px 14px;border-radius:10px;margin-top:12px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<main>
+  <h1>🌾 Petak Terasering Setengah-Setengah</h1>
+  <p class="sub">Seorang petani di Cigalontang menanam padi di satu petak: hari pertama separuh petak, hari kedua separuh dari sisanya, dan seterusnya.</p>
+
+  <section class="card" aria-labelledby="q">
+    <p class="q" id="q">Tebak dulu! Jika dilakukan terus tanpa henti, apa yang terjadi pada petak itu?</p>
+    <div class="opts">
+      <button class="opt" data-k="A"><b>A</b>Tepat satu petak tertanam penuh</button>
+      <button class="opt" data-k="B"><b>B</b>Hampir satu petak, tetapi tak pernah penuh</button>
+      <button class="opt" data-k="C"><b>C</b>Lebih dari satu petak</button>
+    </div>
+    <div class="bars" id="bars" aria-live="polite"></div>
+    <div class="meta"><span id="total">Belum ada suara. Setiap sentuhan = 1 suara.</span><button class="ghost" id="reset" style="min-height:40px;padding:6px 14px">Hapus hasil jajak</button></div>
+  </section>
+
+  <section class="card" aria-labelledby="h2">
+    <p class="q" id="h2">Sekarang kita periksa: tanam hari demi hari</p>
+    <div class="stage">
+      <svg id="svg" viewBox="0 0 640 260" role="img" aria-label="Petak sawah yang ditanami separuh demi separuh"></svg>
+    </div>
+    <div class="ctrl">
+      <button class="primary" id="next">Hari berikutnya ▶</button>
+      <button id="auto">Putar otomatis</button>
+      <button class="ghost" id="restart">↺ Ulangi dari awal</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><small>Hari ke-</small><strong id="sd">0</strong></div>
+      <div class="stat"><small>Ditanam hari ini</small><strong id="st">0</strong></div>
+      <div class="stat"><small>Total sudah ditanam</small><strong id="sc">0</strong></div>
+      <div class="stat"><small>Sisa petak</small><strong id="ss">1</strong></div>
+    </div>
+    <p class="sum" id="sum">1/2 + 1/4 + 1/8 + ... = ?</p>
+    <div class="note hidden" id="note"></div>
+  </section>
+</main>
+
+<script>
+(function(){
+  var KEY='tebakan-terasering-v1', mem={A:0,B:0,C:0};
+  function load(){try{var v=localStorage.getItem(KEY);if(v){var o=JSON.parse(v);if(o&&typeof o.A==='number')return o;}}catch(e){}return mem;}
+  function save(o){mem=o;try{localStorage.setItem(KEY,JSON.stringify(o));}catch(e){}}
+  var votes=load();
+  var labels={A:'A',B:'B',C:'C'};
+  function drawBars(){
+    var t=votes.A+votes.B+votes.C, box=document.getElementById('bars');
+    box.innerHTML='';
+    ['A','B','C'].forEach(function(k){
+      var p=t?Math.round(votes[k]*100/t):0;
+      var d=document.createElement('div');d.className='bar';
+      d.innerHTML='<strong>'+k+'</strong><div class="track"><div class="fill" style="width:'+p+'%"></div></div><span>'+votes[k]+' ('+p+'%)</span>';
+      box.appendChild(d);
+    });
+    document.getElementById('total').textContent=t?('Total '+t+' suara.'):'Belum ada suara. Setiap sentuhan = 1 suara.';
+  }
+  document.querySelectorAll('.opt').forEach(function(b){
+    b.addEventListener('click',function(){var k=b.getAttribute('data-k');votes[k]++;save(votes);drawBars();});
+  });
+  document.getElementById('reset').addEventListener('click',function(){votes={A:0,B:0,C:0};save(votes);drawBars();});
+  drawBars();
+
+  // ===== animasi petak =====
+  var NS='http://www.w3.org/2000/svg', W=640, H=260, MAXD=12, day=0, timer=null;
+  var svg=document.getElementById('svg'), layer;
+  var greens=['#3f9a45','#52ad57','#3a8f40','#5bb760'];
+  function el(n,a){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);return e;}
+  function base(){
+    svg.innerHTML='';
+    svg.appendChild(el('rect',{x:0,y:0,width:W,height:H,fill:'var(--soil)'}));
+    for(var i=1;i<6;i++)svg.appendChild(el('line',{x1:0,x2:W,y1:i*H/6,y2:i*H/6,stroke:'var(--soil2)','stroke-width':2,'stroke-dasharray':'6 8'}));
+    layer=el('g',{});svg.appendChild(layer);
+    var s=el('text',{x:W-12,y:30,'text-anchor':'end','font-size':20,fill:'#fff','font-weight':700,id:'sisaLbl'});
+    s.textContent='sisa';svg.appendChild(s);
+    svg.appendChild(el('rect',{x:1,y:1,width:W-2,height:H-2,fill:'none',stroke:'rgba(0,0,0,.35)','stroke-width':2}));
+  }
+  function frac(n){ return n<=10 ? (Math.pow(2,n)-1)+'/'+Math.pow(2,n) : null; }
+  function pct(x){ return (x*100).toFixed(x>0.99?4:2).replace('.',',')+'%'; }
+  function addDay(d){
+    var x=W*(1-1/Math.pow(2,d-1)), w=W/Math.pow(2,d);
+    var g=el('g',{});
+    var r=el('rect',{x:x,y:0,width:0,height:H,fill:greens[d%4],class:'rect-p'});
+    g.appendChild(r);
+    if(w>10){
+      for(var i=0;i<6;i++){
+        var y=i*H/6+H/12;
+        g.appendChild(el('line',{x1:x+3,x2:x+w-3,y1:y,y2:y,stroke:'rgba(255,255,255,.55)','stroke-width':3,'stroke-dasharray':'2 7','stroke-linecap':'round'}));
+      }
+    }
+    if(w>34){
+      var t=el('text',{x:x+w/2,y:H/2+8,'text-anchor':'middle','font-size':Math.min(28,w/2.4),fill:'#fff','font-weight':700});
+      t.textContent='1/'+Math.pow(2,d);g.appendChild(t);
+    }
+    var l=el('text',{x:x+w/2,y:H-10,'text-anchor':'middle','font-size':w>34?13:0,fill:'#fff'});
+    l.textContent='hari '+d;g.appendChild(l);
+    layer.appendChild(g);
+    requestAnimationFrame(function(){requestAnimationFrame(function(){r.setAttribute('width',w);});});
+  }
+  function update(){
+    var rest=1/Math.pow(2,day);
+    document.getElementById('sd').textContent=day;
+    document.getElementById('st').textContent=day?(day<=10?'1/'+Math.pow(2,day):pct(rest)):'0';
+    document.getElementById('sc').textContent=day?(frac(day)||pct(1-rest)):'0';
+    document.getElementById('ss').textContent=day?(day<=10?'1/'+Math.pow(2,day):pct(rest)):'1';
+    var terms=[];for(var i=1;i<=Math.min(day,5);i++)terms.push('1/'+Math.pow(2,i));
+    var s=day?terms.join(' + ')+(day>5?' + ...':' + ...'):'1/2 + 1/4 + 1/8 + ...';
+    document.getElementById('sum').innerHTML=day?(s+' = <em>'+(frac(day)||pct(1-rest))+'</em> petak'+(day>=MAXD?' ≈ 1':'')):(s+' = ?');
+    document.getElementById('next').disabled=day>=MAXD;
+    var note=document.getElementById('note');
+    if(day>=MAXD){
+      note.classList.remove('hidden');
+      note.innerHTML='<b>Kesimpulan.</b> Pada hari mana pun, selalu tersisa petak yang sangat kecil (hari ke-'+MAXD+': sisa '+pct(rest)+'), jadi petak tak pernah <i>sudah</i> penuh pada hari tertentu. Namun makin lama sisanya makin mendekati 0, sehingga jumlah seluruhnya mendekati <b>1 petak</b>. Itulah yang kita sebut <b>jumlah deret geometri tak hingga</b>: 1/2 + 1/4 + 1/8 + ... = 1. Cocokkah dengan tebakan kelas tadi?';
+      stop();
+    } else note.classList.add('hidden');
+  }
+  function step(){ if(day<MAXD){day++;addDay(day);update();} }
+  function stop(){ if(timer){clearInterval(timer);timer=null;} document.getElementById('auto').textContent='Putar otomatis'; }
+  document.getElementById('next').addEventListener('click',function(){stop();step();});
+  document.getElementById('auto').addEventListener('click',function(){
+    if(timer){stop();return;}
+    if(day>=MAXD){day=0;base();update();}
+    document.getElementById('auto').textContent='⏸ Jeda';
+    step();timer=setInterval(step,1200);
+  });
+  document.getElementById('restart').addEventListener('click',function(){stop();day=0;base();update();});
+  base();update();
+})();
+</script>
+</body>
+</html>
